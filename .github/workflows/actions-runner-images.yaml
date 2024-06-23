@@ -18,7 +18,7 @@ on:
         default: 'false'
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: emberstack/actions-runner
+  IMAGE_NAME: emberstack/github-actions-runner
 
 jobs:
   build:
