@@ -28,7 +28,7 @@ RUN export RUNNER_ARCH=${TARGETARCH} \
     && rm -rf docker.tgz \
     && mkdir -p /usr/local/lib/docker/cli-plugins \
     && curl -fLo /usr/local/lib/docker/cli-plugins/docker-buildx \
-        "https://github.com/docker/buildx/releases/download/v${BUILDX_VERSION}/buildx-v${BUILDX_VERSION}.linux-${TARGETARCH}" \
+    "https://github.com/docker/buildx/releases/download/v${BUILDX_VERSION}/buildx-v${BUILDX_VERSION}.linux-${TARGETARCH}" \
     && chmod +x /usr/local/lib/docker/cli-plugins/docker-buildx
 
 FROM mcr.microsoft.com/dotnet/runtime-deps:8.0
@@ -41,11 +41,16 @@ ENV ACTIONS_RUNNER_PRINT_LOG_TO_STDOUT=1
 ENV DOTNET_INSTALL_DIR=./.dotnet
 
 RUN apt update -y && \
-    apt install -y --no-install-recommends sudo lsb-release gpg-agent software-properties-common python3-launchpadlib  &&\
-    add-apt-repository ppa:git-core/ppa && \
-    apt update -y && \
-    apt install -y git && \
-    rm -rf /var/lib/apt/lists/*
+    # base packages
+    apt install -y --no-install-recommends sudo lsb-release gpg-agent software-properties-common ca-certificates && \
+    # install git
+    apt install -y python3-launchpadlib && add-apt-repository ppa:git-core/ppa && apt update -y && apt install -y git && \
+    # install base software
+    apt install -y --no-install-recommends \
+    curl wget jq \
+    zip unzip \
+    zip unzip \
+    &&  rm -rf /var/lib/apt/lists/*
 
 RUN adduser --disabled-password --gecos "" --uid 1001 runner \
     && groupadd docker --gid 123 \
