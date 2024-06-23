@@ -1,0 +1,62 @@
+name: actions-runner images
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+
+  workflow_dispatch:
+    inputs:
+      force_build:
+        description: 'Forces a build even if no changes are detected'
+        required: true
+        default: 'false'
+      force_publish:
+        description: 'Forces a publish even if no changes are detected'
+        required: true
+        default: 'false'
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: emberstack/actions-runner
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      id-token: write
+      contents: read
+      checks: write
+    steps:
+
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: docker login
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: emberstack
+          password: ${{ secrets.ES_GITHUB_PAT }}
+
+
+      - name: build - base image
+        shell: pwsh
+        run: ./build-base.ps1
+        working-directory: ./src/images/base
+
+
+      - name: build-and-push - default
+        uses: docker/build-push-action@v3
+        with:
+          context: ./src/images/default
+          platforms: |
+            linux/amd64
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          labels: |
+            org.opencontainers.image.licenses=MIT
+
+
