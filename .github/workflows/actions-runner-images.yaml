@@ -44,19 +44,35 @@ jobs:
       - name: build - ubuntu - base
         shell: pwsh
         run: ./build-base.ps1
-        working-directory: ./src/images/ubuntu/base
+        working-directory: ./src/images/.base-ubuntu
 
 
       - name: build-and-push - ubuntu
         uses: docker/build-push-action@v3
         with:
-          context: ./src/images/ubuntu/default
+          context: ./src/images/ubuntu
           platforms: |
             linux/amd64
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ubuntu
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ubuntu-latest
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          labels: |
+            org.opencontainers.image.licenses=MIT
+
+
+      - name: build-and-push - tools-ubuntu
+        uses: docker/build-push-action@v3
+        with:
+          context: ./src/images/tools-ubuntu
+          platforms: |
+            linux/amd64
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:tools
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:tools-latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:tools-ubuntu
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:tools-ubuntu-latest
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
           labels: |
             org.opencontainers.image.licenses=MIT
