@@ -41,13 +41,13 @@ jobs:
           password: ${{ secrets.ES_GITHUB_PAT }}
 
 
-      - name: build - base image
+      - name: build - ubuntu - base
         shell: pwsh
         run: ./build-base.ps1
-        working-directory: ./src/images/base
+        working-directory: ./src/images/ubuntu/base
 
 
-      - name: build-and-push - default
+      - name: build-and-push - ubuntu
         uses: docker/build-push-action@v3
         with:
           context: ./src/images/default
@@ -55,6 +55,8 @@ jobs:
             linux/amd64
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ubuntu
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ubuntu-latest
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
           labels: |
             org.opencontainers.image.licenses=MIT
