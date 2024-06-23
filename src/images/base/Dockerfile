@@ -37,6 +37,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV RUNNER_MANUALLY_TRAP_SIG=1
 ENV ACTIONS_RUNNER_PRINT_LOG_TO_STDOUT=1
 
+# TODO: Remove this when the dotnet setup is fixed
+ENV DOTNET_INSTALL_DIR=./.dotnet
+
 RUN apt update -y && \
     apt install -y --no-install-recommends sudo lsb-release gpg-agent software-properties-common python3-launchpadlib  &&\
     add-apt-repository ppa:git-core/ppa && \
