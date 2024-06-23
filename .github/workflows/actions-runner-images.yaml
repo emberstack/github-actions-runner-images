@@ -50,7 +50,7 @@ jobs:
       - name: build-and-push - ubuntu
         uses: docker/build-push-action@v3
         with:
-          context: ./src/images/default
+          context: ./src/images/ubuntu/default
           platforms: |
             linux/amd64
           tags: |
